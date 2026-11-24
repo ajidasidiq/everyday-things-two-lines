@@ -31,12 +31,16 @@ def gate_check(text: str) -> None:
     """Self-check mirroring the competition gate: 2 lines, 1-400 chars."""
     if not text or not text.strip():
         raise SystemExit("gate failed: entry is empty or only whitespace")
+    if any(ord(c) < 0x20 and c != "\n" for c in text):
+        raise SystemExit("gate failed: entry contains control characters")
     lines = text.split("\n")
     if len(lines) != 2:
         raise SystemExit(f"gate failed: entry has {len(lines)} lines, need 2")
     for i, line in enumerate(lines, 1):
         if not line.strip():
             raise SystemExit(f"gate failed: line {i} is empty")
+        if line != line.strip():
+            raise SystemExit(f"gate failed: line {i} has leading/trailing space")
         if line.count(".") != 1 or not line.endswith("."):
             raise SystemExit(f"gate failed: line {i} is not one sentence")
     if len(text) > MAX_CHARS:
